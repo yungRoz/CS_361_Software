@@ -1,0 +1,5 @@
+# Dependency directory
+node_modules
+
+# database config (dev)
+dbcon.js
