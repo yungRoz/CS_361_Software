@@ -5,6 +5,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var expressValidator = require('express-validator');
 var exphbs = require('express-handlebars');
 var session = require('express-session');
 var passport = require('passport');
@@ -25,6 +26,7 @@ app.set('view engine', 'handlebars');
 // body-parser
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(expressValidator()); // this line must be immediately after any of the bodyParser middlewares!
 
 // cookie-parser
 app.use(cookieParser());

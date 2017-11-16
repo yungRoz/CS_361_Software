@@ -4,7 +4,15 @@
     <button onclick="document.getElementById('id1').style.display='block'"><u>Signup</u></button>.
 It's free.</p>
 
-<form action="">
+{{#if errors}}
+    <ul>
+        {{#each errors}}
+            <li>{{this.msg}}</li>
+        {{/each}}
+    </ul>
+{{/if}}
+
+<form method="POST" action="/users/login">
     <div id="id0" class="login_container">
         <label><b>Email</b></label>
         <input type="text" name="lg_email" required>
@@ -23,7 +31,7 @@ It's free.</p>
                 <span onclick="document.getElementById('id1').style.display='none'" class="w3-button w3-large w3-display-topright">&times;</span>
                 <h2>signup</h2>
             </header>
-            <form>
+            <form method="POST" action="/users/register">
                 <div class="w3-container">
                     <br><br>
                     <label><b>Full Name*</b></label>
