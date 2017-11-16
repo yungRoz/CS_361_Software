@@ -1,3 +1,6 @@
+// Load environment variables
+require('dotenv').config();
+
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
@@ -6,8 +9,8 @@ var exphbs = require('express-handlebars');
 var session = require('express-session');
 var passport = require('passport');
 var localStrategy = require('passport-local').Strategy;
-var mysql = require('./dbcon.js');
 
+// define routes
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
