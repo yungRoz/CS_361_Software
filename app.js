@@ -10,7 +10,6 @@ var exphbs = require('express-handlebars');
 var session = require('express-session');
 var MySQLStore = require('express-mysql-session');
 var passport = require('passport');
-var localStrategy = require('passport-local').Strategy;
 var bcrypt = require('bcryptjs');
 
 // Initialize App
@@ -37,9 +36,9 @@ var sessionStore = new MySQLStore({
     database: process.env.DB_NAME
 });
 
-// Express Session; TODO: randomize secret
+// Express Session
 app.use(session({
-    secret: 'secret',
+    secret: process.env.SESSION_SECRET,
     saveUninitialized: false,
     resave: false,
     store: sessionStore
@@ -49,6 +48,12 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+// pass authentication information to all views
+app.use(function(req, res, next){
+    res.locals.isAuthenticated = req.isAuthenticated();
+    next();
+});
+
 // set static folder
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -56,49 +61,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 var index = require('./routes/index');
 var users = require('./routes/users');
 
-// pass authentication information to all views
-app.use(function(req, res, next){
-    res.locals.isAuthenticated = req.isAuthenticated();
-    next();
-});
-
 // set up routes
 app.use('/', index);
 app.use('/users', users);
-
-// set up authentication
-passport.use(new localStrategy({
-    usernameField: 'lg_email',
-    passwordField: 'lg_pw'
-    },
-    function(email, password, done){
-        const mysql = require('./db.js');
-        // get users password from the database
-        mysql.pool.query('SELECT id, password FROM users WHERE email = ?', [email], function(err, result){
-            if(err){
-                done(err);
-                return;
-            }
-
-            // email account not found
-            if(result.length === 0){
-                done(null, false);
-                return;
-            }
-
-            // compare user's saved password with input password
-            const hash = result[0].password.toString();
-            bcrypt.compare(password, hash, function(err, response){
-                // return user id if match
-                if(response === true){
-                    return done(null, {user_id: result[0].id});
-                } else {
-                    return done(null, false);
-                }
-            });
-        });
-    }
-));
 
 // Set port and start server
 app.set('port', 8000);

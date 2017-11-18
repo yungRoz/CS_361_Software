@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var mysql = require('../db.js');
 var passport = require('passport');
+var localStrategy = require('passport-local').Strategy;
 
 var bcrypt = require('bcryptjs');
 const saltRounds = 10;
@@ -30,8 +31,12 @@ router.post('/login', passport.authenticate('local', {
 // Logout Request Handler
 router.get('/logout', function(req, res, next){
     req.logout();
-    req.session.destroy();
-    res.redirect('/');
+
+    // destroy session from session store
+    req.session.destroy(() => {
+        res.clearCookie('connect.sid');
+        res.redirect('/');
+    });
 });
 
 // Register Request Handler
@@ -83,5 +88,39 @@ passport.serializeUser(function(user_id, done){
 passport.deserializeUser(function(user_id, done){
     done(null, user_id);
 });
+
+// authentication
+passport.use(new localStrategy({
+    usernameField: 'lg_email',
+    passwordField: 'lg_pw'
+    },
+    function(email, password, done){
+        const mysql = require('../db.js');
+        // get user's password from the database
+        mysql.pool.query('SELECT id, password FROM users WHERE email = ?', [email], function(err, result){
+            if(err){
+                done(err);
+                return;
+            }
+
+            // email account not found
+            if(result.length === 0){
+                done(null, false);
+                return;
+            }
+
+            // compare user's saved password with input password
+            const hash = result[0].password.toString();
+            bcrypt.compare(password, hash, function(err, response){
+                // return user id if match
+                if(response === true){
+                    return done(null, {user_id: result[0].id});
+                } else {
+                    return done(null, false);
+                }
+            });
+        });
+    }
+));
 
 module.exports = router;
