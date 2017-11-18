@@ -36,9 +36,9 @@ var sessionStore = new MySQLStore({
     database: process.env.DB_NAME
 });
 
-// Express Session; TODO: randomize secret
+// Express Session
 app.use(session({
-    secret: 'secret',
+    secret: process.env.SESSION_SECRET,
     saveUninitialized: false,
     resave: false,
     store: sessionStore
