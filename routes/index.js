@@ -1,11 +1,9 @@
 var express = require('express');
 var router = express.Router();
-var mysql = require('../db.js');
 var passport = require('passport');
 var localStrategy = require('passport-local').Strategy;
 
-var bcrypt = require('bcryptjs');
-const saltRounds = 10;
+var User = require('../models/user.js');
 
 // Home Page
 router.get('/', function(req, res){
@@ -63,25 +61,21 @@ router.post('/register', function(req, res, next){
         return;
     }
 
-    const name = req.body.reg_fullname;
-    const email = req.body.reg_email;
-    const password = req.body.reg_pw;
+    var newUser = {
+        name: req.body.reg_fullname,
+        email: req.body.reg_email,
+        password: req.body.reg_pw
+    };
 
-    // hash password
-    bcrypt.hash(password, saltRounds, function(err, hash){
-        // Save user to database
-        mysql.pool.query('INSERT INTO users (name, email, password) VALUES (?, ?, ?)', [name, email, hash], function (err, result){
-            if(err){
-                next(err);
-                return;
-            }
+    User.createUser(newUser, function(err, result){
+        if(err) throw err;
+        console.log(newUser);
 
-            const user_id = result.insertId;
+        const user_id = result.insertId;
 
-            // Log user in and redirect to personalized home page
-            req.login(user_id, function (err) {
-                res.redirect('/users/profile')
-            });
+        // Log user in and redirect to personalized home page
+        req.login(user_id, function (err) {
+        res.redirect('/users/profile')
         });
     });
 });
@@ -100,30 +94,28 @@ passport.use(new localStrategy({
     passwordField: 'lg_pw'
     },
     function(email, password, done){
-        const mysql = require('../db.js');
-        // get user's password from the database
-        mysql.pool.query('SELECT id, password FROM users WHERE email = ?', [email], function(err, result){
+        User.getUserByEmail(email, function(err, user){
             if(err){
                 done(err);
                 return;
             }
-
-            // email account not found
-            if(result.length === 0){
+            
+            // user with specified email not found
+            if(!user){
                 done(null, false);
                 return;
             }
 
-            // compare user's saved password with input password
-            const hash = result[0].password.toString();
-            bcrypt.compare(password, hash, function(err, response){
+            // verify password
+            User.comparePassword(password, user.password.toString(), function(err, isMatch){
+                if(err) throw err;
                 // return user id if match
-                if(response === true){
-                    return done(null, {user_id: result[0].id});
+                if(isMatch === true){
+                    return done(null, {user_id: user.id});
                 } else {
                     return done(null, false);
                 }
-            });
+            })
         });
     }
 ));
