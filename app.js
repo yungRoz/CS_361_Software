@@ -12,6 +12,9 @@ var MySQLStore = require('express-mysql-session');
 var passport = require('passport');
 var bcrypt = require('bcryptjs');
 
+var index = require('./routes/index');
+var users = require('./routes/users');
+
 // Initialize App
 var app = express();
 
@@ -56,10 +59,6 @@ app.use(function(req, res, next){
 
 // set static folder
 app.use(express.static(path.join(__dirname, 'public')));
-
-// define routes
-var index = require('./routes/index');
-var users = require('./routes/users');
 
 // set up routes
 app.use('/', index);
