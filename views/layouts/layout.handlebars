@@ -10,13 +10,14 @@
         <div id="navBar" class="topNav">
             <h1>EDGEGATE</h1>
             {{#if isAuthenticated}}
-                <a href="/logout">Logout</a>
-                <a href="/users/profile">Profile</a>
+                <a href="/logout" id="logout">Logout</a>
+                <a href="/help" id="help">Help</a>
+                <a href="/users/profile" id="profile">Profile</a>
             {{else}}
                 <a href="/login">Login</a>
             {{/if}}
-            <a href="/courses">Courses</a>
-            <a href="/">Home</a>
+            <a href="/courses" id="courses">Courses</a>
+            <a href="/" id="home">Home</a>
         </div>
         {{{body}}}
     </body>

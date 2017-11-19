@@ -36,6 +36,20 @@
     cursor: pointer;
 }
 
+#btns button{
+  font-size: 20px;
+  cursor: pointer;
+}
+
+#nextBtn{
+  visibility: hidden;
+}
+
+#nextBtn button{
+  font-size: 20px;
+  cursor: pointer;
+}
+
 .overview {
     text-align: justify;
     margin-left: 15%;

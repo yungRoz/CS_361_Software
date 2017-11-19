@@ -17,6 +17,11 @@ router.get('/courses', function(req, res){
     res.render('courses', {title: 'Courses'});
 });
 
+// Help Page
+router.get('/help', function(req, res){
+    res.render('help');
+});
+
 // Login Page
 router.get('/login', function(req, res, next){
     res.render('login', {title: 'Login'});
