@@ -13,21 +13,32 @@ module.exports.createUser = function(newUser, callback){
     bcrypt.hash(newUser.password, saltRounds, function (err, hash) {
         newUser.password = hash;
         // Save user to database
-        db.query('INSERT INTO users (name, email, password) VALUES (?, ?, ?)', [newUser.name, newUser.email, newUser.password], callback); 
+        db.query('INSERT INTO users (name, email, password) VALUES (?, ?, ?)', [newUser.name, newUser.email, newUser.password], function(err, results){
+            newUser.id = results.insertId;
+            callback(err, results);
+        }); 
     });
 };
 
 // retrieve user from database by email
 module.exports.getUserByEmail = function(email, callback){
     db.query('SELECT * FROM users WHERE email = ?', [email], function(err, results){
-        callback(err, results[0]);
+        var user = results[0];
+        if(user){
+            user.password = user.password.toString();
+        }
+        callback(err, user);
     });
 };
 
 // retrieve user from database by id
 module.exports.getUserById = function(id, callback){
     db.query('SELECT * FROM users WHERE id = ?', [id], function(err, results){
-        callback(err, results[0]);
+        var user = results[0];
+        if(user){
+            user.password = user.password.toString();
+        }
+        callback(err, user);
     });
 };
 
