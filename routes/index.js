@@ -38,7 +38,7 @@ router.get('/logout', function(req, res, next){
     // destroy session from session store
     req.session.destroy(() => {
         res.clearCookie('connect.sid');
-        res.redirect('/');
+        res.redirect('/login');
     });
 });
 
@@ -56,7 +56,6 @@ router.post('/register', function(req, res, next){
     // Display any errors
     var errors = req.validationErrors();
     if(errors){
-        console.log('errors: ' + JSON.stringify(errors));
         res.render('login', {title: 'Login', errors: errors})
         return;
     }
@@ -69,23 +68,23 @@ router.post('/register', function(req, res, next){
 
     User.createUser(newUser, function(err, result){
         if(err) throw err;
-        console.log(newUser);
-
-        const user_id = result.insertId;
 
         // Log user in and redirect to personalized home page
-        req.login(user_id, function (err) {
-        res.redirect('/users/profile')
+        req.login(newUser, function (err) {
+            if (err) throw err;
+            res.redirect('/users/profile')
         });
     });
 });
 
-passport.serializeUser(function(user_id, done){
-    done(null, user_id);
+passport.serializeUser(function(user, done){
+    done(null, user.id);
 });
 
-passport.deserializeUser(function(user_id, done){
-    done(null, user_id);
+passport.deserializeUser(function(id, done){
+    User.getUserById(id, function(err, user){
+        done(err, user);
+    });
 });
 
 // authentication
@@ -96,26 +95,24 @@ passport.use(new localStrategy({
     function(email, password, done){
         User.getUserByEmail(email, function(err, user){
             if(err){
-                done(err);
-                return;
+                return done(err);
             }
             
             // user with specified email not found
             if(!user){
-                done(null, false);
-                return;
+                return done(null, false);
             }
 
             // verify password
-            User.comparePassword(password, user.password.toString(), function(err, isMatch){
+            User.comparePassword(password, user.password, function(err, isMatch){
                 if(err) throw err;
                 // return user id if match
-                if(isMatch === true){
-                    return done(null, {user_id: user.id});
+                if(isMatch){
+                    return done(null, user);
                 } else {
                     return done(null, false);
                 }
-            })
+            });
         });
     }
 ));
