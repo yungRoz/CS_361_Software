@@ -4,7 +4,12 @@
   "description": "CS_361_Software",
   "main": "app.js",
   "scripts": {
+    "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engineStrict": true,
+  "engines": {
+    "node": ">=7.0.0"
   },
   "repository": {
     "type": "git",
