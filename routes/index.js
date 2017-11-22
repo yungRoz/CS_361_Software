@@ -27,7 +27,7 @@ router.get('/login', function(req, res, next){
 
 // Login Request Handler
 router.post('/login', passport.authenticate('local', {
-    successRedirect: '/users/profile',
+    successRedirect: '/',
     failureRedirect: '/login'
 }));
 
