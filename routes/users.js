@@ -1,6 +1,7 @@
-
+var db = require('../db.js');
 var express = require('express');
 var router = express.Router();
+
 
 // User Profile
 router.get('/profile', verifyAuthentication(), function(req, res, next){
@@ -9,7 +10,21 @@ router.get('/profile', verifyAuthentication(), function(req, res, next){
 
 // Projects Page
 router.get('/projects', function(req, res){
-    res.render('projects', {title: 'Projects'});
+  var projects = []
+  db.query("SELECT user_project.user_id, user_project.project_id, projects.title FROM user_project INNER JOIN projects ON user_project.project_id = projects.id WHERE user_id=?", [req.user.id], function(err, result){
+    for(var i = 0; i < result.length; i++){
+      projects.push({id: result[i].project_id, title: result[i].title});
+    }
+    res.render('projects/index', {projects});
+  });
+});
+
+
+// Projects Details Page
+router.get('/projects/details', function(req, res, next){
+    db.query('SELECT * FROM projects WHERE id=?', [req.query.id], function(err, result){
+    res.render('projects/details', {title: result[0].title, instructions: result[0].instructions});
+  });
 });
 
 // Restrict unauthorized access to particular pages
