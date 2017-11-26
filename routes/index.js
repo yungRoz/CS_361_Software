@@ -1,10 +1,9 @@
 var express = require('express');
 var router = express.Router();
-var mysql = require('../db.js');
 var passport = require('passport');
+var localStrategy = require('passport-local').Strategy;
 
-var bcrypt = require('bcryptjs');
-const saltRounds = 10;
+var User = require('../models/user.js');
 
 // Home Page
 router.get('/', function(req, res){
@@ -16,6 +15,18 @@ router.get('/courses', function(req, res){
     res.render('courses', {title: 'Courses'});
 });
 
+// Lessons Page
+router.get('/lessons', function(req, res){
+    res.render('lessons', {title: 'Lessons'});
+});
+
+
+
+// Help Page
+router.get('/help', function(req, res){
+    res.render('help');
+});
+
 // Login Page
 router.get('/login', function(req, res, next){
     res.render('login', {title: 'Login'});
@@ -23,15 +34,20 @@ router.get('/login', function(req, res, next){
 
 // Login Request Handler
 router.post('/login', passport.authenticate('local', {
-    successRedirect: '/users/profile',
-    failureRedirect: '/login'
+    successRedirect: '/',
+    failureRedirect: '/login',
+    failueFlash: 'Invalid username or password.'
 }));
 
 // Logout Request Handler
 router.get('/logout', function(req, res, next){
     req.logout();
-    req.session.destroy();
-    res.redirect('/');
+
+    // destroy session from session store
+    req.session.destroy(() => {
+        res.clearCookie('connect.sid');
+        res.redirect('/login');
+    });
 });
 
 // Register Request Handler
@@ -48,40 +64,65 @@ router.post('/register', function(req, res, next){
     // Display any errors
     var errors = req.validationErrors();
     if(errors){
-        console.log('errors: ' + JSON.stringify(errors));
         res.render('login', {title: 'Login', errors: errors})
         return;
     }
 
-    const name = req.body.reg_fullname;
-    const email = req.body.reg_email;
-    const password = req.body.reg_pw;
+    var newUser = {
+        name: req.body.reg_fullname,
+        email: req.body.reg_email,
+        password: req.body.reg_pw
+    };
 
-    // hash password
-    bcrypt.hash(password, saltRounds, function(err, hash){
-        // Save user to database
-        mysql.pool.query('INSERT INTO users (name, email, password) VALUES (?, ?, ?)', [name, email, hash], function (err, result){
-            if(err){
-                next(err);
-                return;
-            }
+    User.createUser(newUser, function(err, result){
+        if(err) throw err;
 
-            const user_id = result.insertId;
-
-            // Log user in and redirect to personalized home page
-            req.login(user_id, function (err) {
-                res.redirect('/users/profile')
-            });
+        // Log user in and redirect to personalized home page
+        req.login(newUser, function (err) {
+            if (err) throw err;
+            res.redirect('/users/profile')
         });
     });
 });
 
-passport.serializeUser(function(user_id, done){
-    done(null, user_id);
+passport.serializeUser(function(user, done){
+    done(null, user.id);
 });
 
-passport.deserializeUser(function(user_id, done){
-    done(null, user_id);
+passport.deserializeUser(function(id, done){
+    User.getUserById(id, function(err, user){
+        done(err, user);
+    });
 });
+
+// authentication
+passport.use(new localStrategy({
+    usernameField: 'lg_email',
+    passwordField: 'lg_pw'
+    },
+    function(email, password, done){
+        User.getUserByEmail(email, function(err, user){
+            if(err){
+                return done(err);
+            }
+            
+            // user with specified email not found
+            if(!user){
+                return done(null, false);
+            }
+
+            // verify password
+            User.comparePassword(password, user.password, function(err, isMatch){
+                if(err) throw err;
+                // return user id if match
+                if(isMatch){
+                    return done(null, user);
+                } else {
+                    return done(null, false);
+                }
+            });
+        });
+    }
+));
 
 module.exports = router;
