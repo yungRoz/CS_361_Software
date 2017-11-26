@@ -102,6 +102,7 @@ CREATE TABLE `users` (
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2017-11-24  2:38:14
+
 DROP TABLE IF EXISTS `Lessons`;
 
 CREATE TABLE `Lessons` (
@@ -109,3 +110,4 @@ CREATE TABLE `Lessons` (
   `path` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
