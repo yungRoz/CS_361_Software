@@ -1,9 +1,28 @@
-<h1 style="text-align: center">Welcome!</h1>
-
+<br>
+<h1 class="text-center">Welcome!</h1>
+<hr>
 <p class="overview">EDGEGATE is an E-Learning platform making it easier than ever for young minds to achieve skills that will prepare them for a world where Computer Science and Technology is becoming ever more prevalent.  Our goal is to provide students the means to learn these valuable skills without the need for fancy, expensive schooling.</p>
 <p class="overview">EDGEGATE is here to provide students with an education in Computer Science.  Through the E-Learning platform you will be able to watch lecture videos from qualified instructors, complete programming assignments and projects, and prepare for technial interviews.  This platform is not trying to replace our current education system but to broaden it to meet the educational needs of all so that those less fortunate can stay ahead of the curve.</p>
-<p class="overview">We hope you will enjoy this experience, now lets get started on your first course!</p>
-
-<div class="wrapper">
-    <button type="submit" class="button">Start</button>
+<p class="overview">We hope you will enjoy this experience!</p>
+<hr>
+<div class="text-center">
+  {{#if isAuthenticated}}
+    {{#if currentCourse.started }}
+  <p>Lets get started on your course: {{currentCourse.name}}</p>
+    {{else}}
+  <p>Lets continue with your course: {{currentCourse.name}}</p>
+    {{/if}}
+    <a role="button" class="btn btn-lg btn-primary" href="/courses/{{currentCourse.id}}">Start ></a>
+  {{else}}
+  <p>Log in to get started!</p>
+  <a role="button" class="btn btn-lg btn-success" href="/login">Log in ></a>
+  {{/if}}
 </div>
+<hr>
+{{#if isAuthenticated}}
+<div class="text-center">
+  <p>Your current project is: </p>
+  <a role="button" class="btn btn-lg btn-success" href="/users/projects/{{currentProject.id}}">Go! ></a>
+</div>
+<hr>
+{{/if}}

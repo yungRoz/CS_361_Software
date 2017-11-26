@@ -1,5 +1,5 @@
-<p>Don't have a login? 
-    <button onclick="document.getElementById('id1').style.display='block'"><u>Register</u></button>.
+<p>Don't have a login?
+    <button onclick="document.getElementById('id1').style.display='block'" class="btn btn-primary"><u>Register</u></button>.
 It's free.</p>
 
 {{#if errors}}
@@ -11,41 +11,44 @@ It's free.</p>
 {{/if}}
 
 <form method="POST" action="/login">
-    <div id="id0" class="login_container">
+    <div id="id0" class="form-group login_container">
         <label><b>Email</b></label>
-        <input type="text" name="lg_email" required>
+        <input type="text" class="form-control" name="lg_email" required>
         <br>
         <label><b>Password</b></label>
-        <input type="Password" name="lg_pw" required>
+        <input type="Password" class="form-control" name="lg_pw" required>
     </div>
-    <button type="submit">Login</button>
+    <button type="submit" class="btn btn-success btn-block">Login</button>
 </form>
 
 <div class="w3-container">
     <div id="id1" class="w3-modal w3-animate-opacity">
         <div class="w3-modal-content w3-card-4">
-            <header class="w3-container w3-teal"> 
+            <header class="w3-container w3-teal">
                 <span onclick="document.getElementById('id1').style.display='none'" class="w3-button w3-large w3-display-topright">&times;</span>
                 <h2>Register</h2>
             </header>
             <form method="POST" action="/register">
-                <div class="w3-container">
+                <div class="form-group w3-container">
                     <br><br>
                     <label><b>Full Name*</b></label>
-                    <input type="text" name="reg_fullname" required>
+                    <input type="text" class="form-control" name="reg_fullname" required>
                     <br><br>
                     <label><b>Email*</b></label>
-                    <input type="text" name="reg_email" required>
+                    <input type="text" class="form-control" name="reg_email" required>
                     <br><br>
                     <label><b>Password*</b></label>
-                    <input type="Password" name="reg_pw" required>
+                    <input type="Password" class="form-control" name="reg_pw" required>
                     <br><br>
                     <label><b>Confirm Password*</b></label>
-                    <input type="Password" name="reg_repeat_pw" required>
+                    <input type="Password" class="form-control" name="reg_repeat_pw" required>
                     <br><br>
                 </div>
-                <button type="button" onclick="document.getElementById('id1').style.display='none'" class="cancelButton">Cancel</button>
-                <button type="submit" class="Registerbtn">Register</button>
+                <div class="container text-center">
+                  <button type="button" onclick="document.getElementById('id1').style.display='none'" class="btn btn-danger btn-block">Cancel</button>
+                  <button type="submit" class="btn btn-success btn-block">Register</button>
+                </div>
+
             </form>
         </div>
     </div>
