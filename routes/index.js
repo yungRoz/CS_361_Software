@@ -15,6 +15,15 @@ router.get('/courses', function(req, res){
     res.render('courses', {title: 'Courses'});
 });
 
+
+// Lessons Page
+router.get('/lessons', function(req, res){
+    res.render('lessons', {title: 'Lessons'});
+});
+
+
+
+
 // Help Page
 router.get('/help', function(req, res){
     res.render('help');

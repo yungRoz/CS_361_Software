@@ -8,6 +8,18 @@ router.get('/profile', verifyAuthentication(), function(req, res, next){
     res.render('profile', {title: 'Profile'});
 });
 
+
+// Lessons Page
+router.get('/lessons', function(req, res){
+    res.render('lessons', {title: 'Lessons'});
+});
+
+// lecture page
+router.get('/lecture', function(req, res){
+    res.render('lecture', {title: 'Lecture'});
+});
+
+
 // Projects Page
 router.get('/projects', function(req, res){
   var projects = []
