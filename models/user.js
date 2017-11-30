@@ -11,9 +11,13 @@ module.exports = User;
 module.exports.createUser = function(newUser, callback){
     // hash password
     bcrypt.hash(newUser.password, saltRounds, function (err, hash) {
+        if(err) throw err;
+
         newUser.password = hash;
         // Save user to database
         db.query('INSERT INTO users (name, email, password) VALUES (?, ?, ?)', [newUser.name, newUser.email, newUser.password], function(err, results){
+            if (err) throw err;
+
             newUser.id = results.insertId;
             callback(err, results);
         }); 
@@ -23,6 +27,8 @@ module.exports.createUser = function(newUser, callback){
 // retrieve user from database by email
 module.exports.getUserByEmail = function(email, callback){
     db.query('SELECT * FROM users WHERE email = ?', [email], function(err, results){
+        if(err) throw err;
+
         var user = results[0];
         if(user){
             user.password = user.password.toString();
@@ -34,6 +40,8 @@ module.exports.getUserByEmail = function(email, callback){
 // retrieve user from database by id
 module.exports.getUserById = function(id, callback){
     db.query('SELECT * FROM users WHERE id = ?', [id], function(err, results){
+        if(err) throw err;
+
         var user = results[0];
         if(user){
             user.password = user.password.toString();
@@ -46,6 +54,7 @@ module.exports.getUserById = function(id, callback){
 module.exports.comparePassword = function(candidatePassword, hash, callback){
     bcrypt.compare(candidatePassword, hash, function (err, isMatch) {
         if(err) throw err;
+
         callback(null, isMatch);
     });
 };
