@@ -23,7 +23,7 @@ router.get('/lecture', function(req, res){
 // Projects Page
 router.get('/projects', function(req, res){
   var projects = []
-  db.query("SELECT user_project.user_id, user_project.project_id, projects.title FROM user_project INNER JOIN projects ON user_project.project_id = projects.id WHERE user_id=?", [req.user.id], function(err, result){
+  db.query("SELECT users_projects.userID, users_projects.projectID, projects.title FROM users_projects INNER JOIN projects ON users_projects.projectID = projects.id WHERE userID=?", [req.user.id], function(err, result){
     for(var i = 0; i < result.length; i++){
       projects.push({id: result[i].project_id, title: result[i].title});
     }

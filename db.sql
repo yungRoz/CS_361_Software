@@ -21,57 +21,70 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
 -- --------------------------------------------------------
 
+-- Drop all tables
+DROP TABLE IF EXISTS `courses`;
+DROP TABLE IF EXISTS `lectures`;
+DROP TABLE IF EXISTS `projects`;
+DROP TABLE IF EXISTS `users`;
+DROP TABLE IF EXISTS `sessions`;
+DROP TABLE IF EXISTS `users-courses`;
+DROP TABLE IF EXISTS `users-lectures`;
+DROP TABLE IF EXISTS `users-projects`;
+
+-- --------------------------------------------------------
+
 --
--- Table structure for table `Courses`
+-- Table structure for table `courses`
 --
 
-CREATE TABLE IF NOT EXISTS `Courses` (
-  `id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `courses` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Dumping data for table `Courses`
+-- Dumping data for table `courses`
 --
 
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `Lectures`
+-- Table structure for table `lectures`
 --
 
-CREATE TABLE IF NOT EXISTS `Lectures` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS `lectures` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `youtubeURL` varchar(255) NOT NULL,
-  `courseID` int(11) NOT NULL,
+  `courseID` int(10) UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
   KEY `courseID` (`courseID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Dumping data for table `Lectures`
+-- Dumping data for table `lectures`
 --
 
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `Projects`
+-- Table structure for table `projects`
 --
 
-CREATE TABLE IF NOT EXISTS `Projects` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `projects` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `title` varchar(255) NOT NULL,
   `description` text,
-  `courseID` int(11) NOT NULL,
+  `courseID` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `courseID` (`courseID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+  KEY `projects_ibfk_1_idx` (`courseID`),
+  CONSTRAINT `projects_ibfk_1` FOREIGN KEY (`courseID`) REFERENCES `courses` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Dumping data for table `Projects`
+-- Dumping data for table `projects`
 --
 
 
@@ -83,7 +96,7 @@ CREATE TABLE IF NOT EXISTS `Projects` (
 
 CREATE TABLE IF NOT EXISTS `sessions` (
   `session_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
-  `expires` int(11) unsigned NOT NULL,
+  `expires` int(10) UNSIGNED unsigned NOT NULL,
   `data` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
   PRIMARY KEY (`session_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -96,77 +109,88 @@ CREATE TABLE IF NOT EXISTS `sessions` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `User`
+-- Table structure for table `users`
 --
 
-CREATE TABLE IF NOT EXISTS `User` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `users` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
   `password` binary(60) NOT NULL,
-  `activeCourse` int(11) DEFAULT NULL,
+  `activeCourse` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
-
---
--- Dumping data for table `User`
---
-
-
--- --------------------------------------------------------
-
---
--- Table structure for table `Users_Course`
---
-
-CREATE TABLE IF NOT EXISTS `Users_Course` (
-  `courseID` int(11) NOT NULL,
-  `userID` int(11) NOT NULL,
-  `isEnrolled` tinyint(1) NOT NULL,
-  KEY `courseID` (`courseID`,`userID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `Users_Course`
---
-
-
--- --------------------------------------------------------
-
---
--- Table structure for table `Users_Lectures`
---
-
-CREATE TABLE IF NOT EXISTS `Users_Lectures` (
-  `userID` int(11) DEFAULT NULL,
-  `lectureID` int(11) DEFAULT NULL,
-  `isWatched` tinyint(1) NOT NULL,
-  KEY `UserID` (`userID`),
-  KEY `LectureID` (`lectureID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `Users_Lectures`
---
-
-
--- --------------------------------------------------------
-
---
--- Table structure for table `Users_Project`
---
-
-CREATE TABLE IF NOT EXISTS `Users_Project` (
-  `userID` int(3) unsigned NOT NULL,
-  `projectID` int(11) unsigned NOT NULL,
-  `isSubmitted` tinyint(1) NOT NULL,
-  `grade` float NOT NULL,
-  KEY `userID` (`userID`),
-  KEY `projectID` (`projectID`)
+  UNIQUE KEY `email` (`email`),
+  KEY `users_ibfk_1` (`activeCourse`),
+  CONSTRAINT `users_ibfk_1` FOREIGN KEY (`activeCourse`) REFERENCES `courses` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Dumping data for table `Users_Project`
+-- Dumping data for table `users`
 --
 
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users_courses`
+--
+
+CREATE TABLE `users_courses` (
+  `courseID` int(10) unsigned NOT NULL,
+  `userID` int(10) unsigned NOT NULL,
+  `isEnrolled` tinyint(1) NOT NULL,
+  UNIQUE KEY `user_course` (`courseID`,`userID`),
+  KEY `users_courses_ibfk_1_idx` (`courseID`),
+  KEY `users_courses_ibfk_2_idx` (`userID`),
+  CONSTRAINT `users_courses_ibfk_1` FOREIGN KEY (`courseID`) REFERENCES `courses` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `users_courses_ibfk_2` FOREIGN KEY (`userID`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `users_courses`
+--
+
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users_lectures`
+--
+
+CREATE TABLE `users_lectures` (
+  `userID` int(10) unsigned DEFAULT NULL,
+  `lectureID` int(10) unsigned DEFAULT NULL,
+  `isWatched` tinyint(1) NOT NULL,
+  UNIQUE KEY `user_lecture` (`userID`,`lectureID`),
+  KEY `users_lectures_ibfk_1_idx` (`userID`),
+  KEY `users_lectures_ibfk_2_idx` (`lectureID`),
+  CONSTRAINT `users_lectures_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `users_lectures_ibfk_2` FOREIGN KEY (`lectureID`) REFERENCES `lectures` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `users_lectures`
+--
+
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users_projects`
+--
+
+CREATE TABLE `users_projects` (
+  `userID` int(10) unsigned NOT NULL,
+  `projectID` int(10) unsigned NOT NULL,
+  `isSubmitted` tinyint(1) NOT NULL,
+  `grade` float NOT NULL,
+  UNIQUE KEY `user_project` (`userID`,`projectID`),
+  KEY `users_projects_ibfk_1_idx` (`userID`),
+  KEY `users_projects_ibfk_2_idx` (`projectID`),
+  CONSTRAINT `users_projects_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `users_projects_ibfk_2` FOREIGN KEY (`projectID`) REFERENCES `projects` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `users_projects`
+--
