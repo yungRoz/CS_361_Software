@@ -22,8 +22,6 @@ router.get('/lessons', function(req, res){
 });
 
 
-
-
 // Help Page
 router.get('/help', function(req, res){
     res.render('help');
@@ -107,7 +105,7 @@ passport.use(new localStrategy({
             if(err){
                 return done(err);
             }
-            
+
             // user with specified email not found
             if(!user){
                 return done(null, false);
