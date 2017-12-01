@@ -1,27 +1,24 @@
 <div class="card card-body mb-2">
-	<label>
-		<h4>
-			<b>Current Lesson</b>
-		</h4>
-		<ul>
-			<li><a role="button" class="btn btn-lg btn-primary" href="/users/lecture">Lecture 4</a></li>
-		</ul>
-	</label>
+    <label>
+        <h4>
+            <b>Current Lesson</b>
+        </h4>
+        <ul>
+            <li>
+                <a role="button" class="btn btn-lg btn-primary" href="/users/lecture">{{nextLecture.title}}</a>
+            </li>
+        </ul>
+    </label>
 </div>
-
 <div class="card card-body mb-2">
-	<label>
-		<h4>
-			<b>Completed Lessons</b>
-		</h4>
-		<ul>
-			<li><a role="button" class="btn btn-lg btn-primary" href="/users/lecture">Lecture 1</a></li>
-		</ul>
-		<ul>
-			<li><a role="button" class="btn btn-lg btn-primary" href="/users/lecture">Lecture 2</a></li>
-		</ul>
-		<ul>
-			<li><a role="button" class="btn btn-lg btn-primary" href="/users/lecture">Lecture 3</a></li>
-		</ul>
-	</label>
+    <label>
+        <h4>
+            <b>Completed Lessons</b>
+        </h4>
+        <ul>
+            {{#each watchedLectures}}
+                <li><a role="button" class="btn btn-lg btn-primary" href="/users/lecture">{{this.title}}</a></li>
+            {{/each}}
+        </ul>
+    </label>
 </div>

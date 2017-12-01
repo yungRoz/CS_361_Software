@@ -15,16 +15,9 @@ router.get('/courses', function(req, res){
     res.render('courses', {title: 'Courses'});
 });
 
-
-// Lessons Page
-router.get('/lessons', function(req, res){
-    res.render('lessons', {title: 'Lessons'});
-});
-
-
 // Help Page
 router.get('/help', function(req, res){
-    res.render('help');
+    res.render('help', {title: 'Help'});
 });
 
 // Login Page
@@ -80,7 +73,7 @@ router.post('/register', function(req, res, next){
         // Log user in and redirect to personalized home page
         req.login(newUser, function (err) {
             if (err) throw err;
-            res.redirect('/users/profile')
+            res.render('index', {title: 'Welcome'});
         });
     });
 });

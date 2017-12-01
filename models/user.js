@@ -1,9 +1,7 @@
 var db = require('../db.js');
 var bcrypt = require('bcryptjs');
 const saltRounds = 10;
-
-var User = {
-};
+var User = {};
 
 module.exports = User;
 
@@ -56,5 +54,32 @@ module.exports.comparePassword = function(candidatePassword, hash, callback){
         if(err) throw err;
 
         callback(null, isMatch);
+    });
+};
+
+// get lectures from user's active course
+module.exports.getActiveCourseLectures = function(user, callback){
+    db.query('SELECT title, youtubeURL, isWatched FROM users u\
+            INNER JOIN users_lectures ul ON u.id = ul.userID\
+            INNER JOIN lectures l ON ul.lectureID = l.id\
+            WHERE l.courseID = u.activeCourse AND u.id = ?',
+            [user.id],
+            function(err, results){
+        if(err) throw err;
+        
+        var watchedLectures = [];
+        var nextLecture;
+
+        results.forEach(element => {
+            console.log(element.title);
+            if(element.isWatched){
+                watchedLectures.push(element);
+            } else {
+                nextLecture = element;
+                callback(watchedLectures, nextLecture);
+                return;
+            }
+        });
+
     });
 };

@@ -47,7 +47,6 @@ CREATE TABLE IF NOT EXISTS `courses` (
 -- Dumping data for table `courses`
 --
 
-
 -- --------------------------------------------------------
 
 --
@@ -56,6 +55,7 @@ CREATE TABLE IF NOT EXISTS `courses` (
 
 CREATE TABLE IF NOT EXISTS `lectures` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) NOT NULL,
   `youtubeURL` varchar(255) NOT NULL,
   `courseID` int(10) UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
@@ -66,7 +66,6 @@ CREATE TABLE IF NOT EXISTS `lectures` (
 -- Dumping data for table `lectures`
 --
 
-
 -- --------------------------------------------------------
 
 --
@@ -76,7 +75,7 @@ CREATE TABLE IF NOT EXISTS `lectures` (
 CREATE TABLE `projects` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `title` varchar(255) NOT NULL,
-  `description` text,
+  `description` text NOT NULL,
   `courseID` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   KEY `projects_ibfk_1_idx` (`courseID`),
@@ -86,7 +85,6 @@ CREATE TABLE `projects` (
 --
 -- Dumping data for table `projects`
 --
-
 
 -- --------------------------------------------------------
 
@@ -104,7 +102,6 @@ CREATE TABLE IF NOT EXISTS `sessions` (
 --
 -- Dumping data for table `sessions`
 --
-
 
 -- --------------------------------------------------------
 
@@ -128,7 +125,6 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-
 -- --------------------------------------------------------
 
 --
@@ -150,7 +146,6 @@ CREATE TABLE `users_courses` (
 -- Dumping data for table `users_courses`
 --
 
-
 -- --------------------------------------------------------
 
 --
@@ -158,8 +153,8 @@ CREATE TABLE `users_courses` (
 --
 
 CREATE TABLE `users_lectures` (
-  `userID` int(10) unsigned DEFAULT NULL,
-  `lectureID` int(10) unsigned DEFAULT NULL,
+  `userID` int(10) unsigned NOT NULL,
+  `lectureID` int(10) unsigned NOT NULL,
   `isWatched` tinyint(1) NOT NULL,
   UNIQUE KEY `user_lecture` (`userID`,`lectureID`),
   KEY `users_lectures_ibfk_1_idx` (`userID`),
@@ -171,7 +166,6 @@ CREATE TABLE `users_lectures` (
 --
 -- Dumping data for table `users_lectures`
 --
-
 
 -- --------------------------------------------------------
 
