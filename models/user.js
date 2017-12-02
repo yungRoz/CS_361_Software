@@ -80,6 +80,10 @@ module.exports.getActiveCourseLectures = function(user, callback){
                 return;
             }
         });
+        if (!results) {
+          callback(null, null);
+          return;
+        }
 
     });
 };
