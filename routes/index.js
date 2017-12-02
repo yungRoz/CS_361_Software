@@ -7,6 +7,7 @@ var User = require('../models/user.js');
 
 // Home Page
 router.get('/', function(req, res){
+    console.log(req.user);
     res.render('index', {title: 'Welcome'});
 });
 
