@@ -8,33 +8,36 @@ var User = require('../models/user.js');
 // Home Page
 router.get('/', function(req, res){
 
-    if (req.user) {
+    // if (req.user) {
+    //
+    //   User.getUserByEmail(req.user.email, function(err, user){
+    //     console.log("step1");
+    //     User.getActiveCourseLectures(user, function(wl, lecture) {
+    //       console.log("step2");
+    //       User.getUserProjects(user, function (err2, projects) {
+    //         console.log("step3");
+    //         if (err2) {
+    //           res.render('index', {title: 'Welcome'});
+    //         } else {
+    //           var locals = {title: 'Welcome'};
+    //           locals.currentLecture = lecture;
+    //           if (projects.length) {
+    //             locals.currentProject = projects[0];
+    //           }
+    //           res.render('index', locals);
+    //         }
+    //       });
+    //     });
+    //   });
+    //
+    // } else {
+    //
+    //   res.render('index', {title: 'Welcome'});
+    //
+    // }
 
-      User.getUserByEmail(req.user.email, function(err, user){
-        console.log("step1");
-        User.getActiveCourseLectures(user, function(wl, lecture) {
-          console.log("step2");
-          User.getUserProjects(user, function (err2, projects) {
-            console.log("step3");
-            if (err2) {
-              res.render('index', {title: 'Welcome'});
-            } else {
-              var locals = {title: 'Welcome'};
-              locals.currentLecture = lecture;
-              if (projects.length) {
-                locals.currentProject = projects[0];
-              }
-              res.render('index', locals);
-            }
-          });
-        });
-      });
+    res.render('index', {title: 'Welcome'}); // to test personalized homepage, comment this out, and uncomment everything else
 
-    } else {
-
-      res.render('index', {title: 'Welcome'});
-
-    }
 });
 
 // Courses Page

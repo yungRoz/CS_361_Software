@@ -65,7 +65,7 @@ module.exports.getActiveCourseLectures = function(user, callback){
             WHERE l.courseID = u.activeCourse AND u.id = ?',
             [user.id],
             function(err, results){
-        // if(err) throw err;
+        if(err) throw err;
 
         var watchedLectures = [];
         var nextLecture;
@@ -96,7 +96,6 @@ module.exports.getUserProjects = function(user, callback) {
           WHERE p.courseID = u.activeCourse AND u.id = ?',
           [user.id],
           function(err, results){
-      // if(err) throw err;
       callback(err, results);
       return;
 
