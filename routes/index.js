@@ -11,9 +11,12 @@ router.get('/', function(req, res){
     if (req.user) {
 
       User.getUserByEmail(req.user.email, function(err, user){
+        console.log("step1");
         User.getActiveCourseLectures(user, function(wl, lecture) {
-          User.getUserProjects(user, function (err, projects) {
-            if (err) {
+          console.log("step2");
+          User.getUserProjects(user, function (err2, projects) {
+            console.log("step3");
+            if (err2) {
               res.render('index', {title: 'Welcome'});
             } else {
               var locals = {title: 'Welcome'};
