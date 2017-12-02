@@ -7,8 +7,31 @@ var User = require('../models/user.js');
 
 // Home Page
 router.get('/', function(req, res){
-    console.log(req.user);
-    res.render('index', {title: 'Welcome'});
+
+    if (req.user) {
+
+      User.getUserByEmail(req.user.email, function(err, user){
+        User.getActiveCourseLectures(user, function(wl, lecture) {
+          User.getUserProjects(user, function (err, projects) {
+            if (err) {
+              res.render('index', {title: 'Welcome'});
+            } else {
+              var locals = {title: 'Welcome'};
+              locals.currentLecture = lecture;
+              if (projects.length) {
+                locals.currentProject = projects[0];
+              }
+              res.render('index', locals);
+            }
+          });
+        });
+      });
+
+    } else {
+
+      res.render('index', {title: 'Welcome'});
+
+    }
 });
 
 // Courses Page

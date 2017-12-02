@@ -85,16 +85,16 @@ module.exports.getActiveCourseLectures = function(user, callback){
 };
 
 // get users active projects
-// module.exports.getUserProjects = function(user, callback) {
-//   db.query('SELECT id, title FROM users u\
-//           INNER JOIN users-projects up ON u.id = up.userID\
-//           INNER JOIN projects p ON up.projectID = p.id\
-//           WHERE p.courseID = u.activeCourse AND u.id = ?',
-//           [user.id],
-//           function(err, results){
-//       if(err) throw err;
-//       callback(results);
-//       return;
-//
-//   });
-// };
+module.exports.getUserProjects = function(user, callback) {
+  db.query('SELECT id, title FROM users u\
+          INNER JOIN users-projects up ON u.id = up.userID\
+          INNER JOIN projects p ON up.projectID = p.id\
+          WHERE p.courseID = u.activeCourse AND u.id = ?',
+          [user.id],
+          function(err, results){
+      // if(err) throw err;
+      callback(err, results);
+      return;
+
+  });
+};
