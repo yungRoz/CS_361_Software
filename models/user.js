@@ -18,7 +18,7 @@ module.exports.createUser = function(newUser, callback){
 
             newUser.id = results.insertId;
             callback(err, results);
-        }); 
+        });
     });
 };
 
@@ -66,7 +66,7 @@ module.exports.getActiveCourseLectures = function(user, callback){
             [user.id],
             function(err, results){
         if(err) throw err;
-        
+
         var watchedLectures = [];
         var nextLecture;
 
@@ -80,6 +80,24 @@ module.exports.getActiveCourseLectures = function(user, callback){
                 return;
             }
         });
+        if (!results) {
+          callback(null, null);
+          return;
+        }
 
     });
+};
+
+// get users active projects
+module.exports.getUserProjects = function(user, callback) {
+  db.query('SELECT id, title FROM users u\
+          INNER JOIN users-projects up ON u.id = up.userID\
+          INNER JOIN projects p ON up.projectID = p.id\
+          WHERE p.courseID = u.activeCourse AND u.id = ?',
+          [user.id],
+          function(err, results){
+      callback(err, results);
+      return;
+
+  });
 };
